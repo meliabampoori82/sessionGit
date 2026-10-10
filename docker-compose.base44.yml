@@ -1,0 +1,48 @@
+# Base44 sandbox runbook — development only.
+#
+# Runs the Vite dev server straight from the cloned source (bind mounted) so every
+# edit is reflected in the preview without rebuilding an image. The repo has no
+# Dockerfile of its own; `node:22` is used as a plain runtime base.
+#
+# Verified with:  curl -s http://localhost:3000/ | head
+services:
+  web:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      # Platform flags, passed through bare. BASE44_PREVIEW_MODE gates the
+      # sandbox-only host allowlist in vite.config.js (exact "1" comparison).
+      - BASE44_PREVIEW_MODE
+      - BASE44_SANDBOX_HOST_DOMAIN
+      # Vite >= 6.1 appends this to server.allowedHosts automatically.
+      - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS
+      - CHOKIDAR_USEPOLLING=true
+    # Install from the lockfile on start (deps live in the bind mount), then run
+    # the dev server with HMR. `docker-compose.base44.yml` owns installation so
+    # the source tree stays the single source of truth.
+    command:
+      - sh
+      - -ec
+      - |
+        if [ -f package-lock.json ]; then
+          npm install --no-audit --no-fund --prefer-offline
+        else
+          npm install --no-audit --no-fund
+        fi
+        exec npm run dev -- --host 0.0.0.0 --port 3000
+    ports:
+      - "3000:3000"
+    restart: on-failure
+    healthcheck:
+      # Probes real app responsiveness, not just an open port.
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 180s

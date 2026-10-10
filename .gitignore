@@ -15,7 +15,6 @@
 *.so
 *.dylib
 *.dll
-
 # Fortran module files
 *.mod
 *.smod
@@ -30,3 +29,9 @@
 *.exe
 *.out
 *.app
+
+# Node / frontend
+node_modules
+dist
+.vite
+npm-debug.log*
