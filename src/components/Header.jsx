@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { navItems, site } from '../data/site.js';
 import { useFavorites } from '../context/FavoritesContext.jsx';
-import { Close, Heart, Mark, Menu, Phone } from './Icons.jsx';
+import { useBooking } from '../context/BookingContext.jsx';
+import { ArrowRight, Close, Heart, Mark, Menu, Phone } from './Icons.jsx';
 
 export default function Header({ transparent = false }) {
   const [solid, setSolid] = useState(!transparent);
   const [menuOpen, setMenuOpen] = useState(false);
   const { count } = useFavorites();
+  const { openBooking } = useBooking();
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -34,19 +36,25 @@ export default function Header({ transparent = false }) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
+  const logo = (
+    <Link className="logo" to="/" aria-label={`${site.name} home`}>
+      <Mark className="logo__mark" />
+      <span className="logo__text">
+        <span className="logo__name">Apex</span>
+        <span className="logo__sub">Motors</span>
+      </span>
+    </Link>
+  );
+
   return (
     <>
       <header
-        className={`site-header${solid ? ' is-solid' : ''}${transparent && !solid ? ' site-header--over-hero' : ''}`}
+        className={`site-header${solid ? ' is-solid' : ''}${
+          transparent && !solid ? ' site-header--over-hero' : ''
+        }`}
       >
         <div className="shell site-header__inner">
-          <Link className="logo" to="/" aria-label={`${site.name} home`}>
-            <Mark className="logo__mark" />
-            <span className="logo__text">
-              <span className="logo__name">Horizon</span>
-              <span className="logo__sub">Properties</span>
-            </span>
-          </Link>
+          {logo}
 
           <nav className="nav" aria-label="Primary">
             {navItems.map((item) => (
@@ -64,16 +72,19 @@ export default function Header({ transparent = false }) {
           <div className="header__actions">
             <Link
               className="header__saved"
-              to="/properties?saved=1"
-              aria-label={`Saved properties (${count})`}
+              to="/inventory?saved=1"
+              aria-label={`Saved vehicles (${count})`}
             >
               <Heart filled={count > 0} />
               {count > 0 && <span className="header__saved-count">{count}</span>}
             </Link>
-            <a className="btn btn--outline header__phone" href={site.phoneHref}>
-              <Phone className="btn__icon" />
-              {site.phone}
-            </a>
+            <button
+              type="button"
+              className="btn btn--outline btn--sm header__cta"
+              onClick={() => openBooking()}
+            >
+              Book a Test Drive
+            </button>
             <button
               type="button"
               className="burger"
@@ -89,13 +100,13 @@ export default function Header({ transparent = false }) {
 
       <div className={`mobile-menu${menuOpen ? ' is-open' : ''}`} hidden={!menuOpen}>
         <div className="mobile-menu__top">
-          <Link className="logo" to="/" onClick={() => setMenuOpen(false)}>
+          <span className="logo logo--light">
             <Mark className="logo__mark" />
             <span className="logo__text">
-              <span className="logo__name">Horizon</span>
-              <span className="logo__sub">Properties</span>
+              <span className="logo__name">Apex</span>
+              <span className="logo__sub">Motors</span>
             </span>
-          </Link>
+          </span>
           <button
             type="button"
             className="mobile-menu__close"
@@ -113,9 +124,7 @@ export default function Header({ transparent = false }) {
               to={item.to}
               end={item.to === '/'}
               style={{ animationDelay: `${80 + index * 55}ms` }}
-              className={({ isActive }) =>
-                `mobile-menu__link${isActive ? ' is-active' : ''}`
-              }
+              className={({ isActive }) => `mobile-menu__link${isActive ? ' is-active' : ''}`}
             >
               {item.label}
             </NavLink>
@@ -123,9 +132,22 @@ export default function Header({ transparent = false }) {
         </nav>
 
         <div className="mobile-menu__foot">
-          <a href={site.phoneHref}>{site.phone}</a>
+          <button
+            type="button"
+            className="btn btn--gold btn--block"
+            onClick={() => {
+              setMenuOpen(false);
+              openBooking();
+            }}
+          >
+            Book a Test Drive
+            <ArrowRight className="btn__icon" />
+          </button>
+          <a href={site.phoneHref}>
+            <Phone />
+            {site.phone}
+          </a>
           <a href={`mailto:${site.email}`}>{site.email}</a>
-          <p>{site.address}</p>
         </div>
       </div>
     </>

@@ -1,95 +1,55 @@
 import { Link } from 'react-router-dom';
+import { services, site } from '../data/site.js';
 import PageBanner from '../components/PageBanner.jsx';
 import Reveal from '../components/Reveal.jsx';
-import SectionHead from '../components/SectionHead.jsx';
-import { ArrowRight } from '../components/Icons.jsx';
-import { properties } from '../data/properties.js';
-import { services } from '../data/site.js';
-
-const process = [
-  {
-    step: '01',
-    title: 'Brief',
-    text: 'We define the brief together: budget, location, timing and how the property will be used.',
-  },
-  {
-    step: '02',
-    title: 'Search',
-    text: 'Portals, off-market contacts and our own register are combined into a shortlist.',
-  },
-  {
-    step: '03',
-    title: 'Assess',
-    text: 'Comparable evidence, condition and running costs are set out before you offer.',
-  },
-  {
-    step: '04',
-    title: 'Close',
-    text: 'We negotiate, coordinate survey and legal teams, and manage the handover.',
-  },
-];
+import { ArrowRight, Phone } from '../components/Icons.jsx';
 
 export default function Services() {
   return (
-    <div>
+    <>
       <PageBanner
-        label="Services"
-        title="Advisory across the whole ownership cycle"
-        intro="From first search to eventual sale, six services designed for private clients and investors."
-        image={properties[2].images[0]}
-        crumbs={[{ label: 'Home', to: '/' }, { label: 'Services' }]}
+        label="Experience excellence"
+        title="Premium Services"
+        text="From first enquiry to long-term ownership — the same team, the same standards."
+        crumbs={[{ label: 'Services' }]}
       />
 
       <section className="section">
-        <div className="shell">
-          <div className="service-grid">
-            {services.map((service, index) => (
-              <Reveal key={service.id} delay={(index % 3) * 80}>
-                <article className="service-tile">
-                  <img src={service.image} alt="" loading="lazy" />
-                  <div className="service-tile__body">
-                    <p className="service-tile__index">{String(index + 1).padStart(2, '0')}</p>
-                    <h3>{service.title}</h3>
-                    <p>{service.text}</p>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--mist">
-        <div className="shell">
-          <SectionHead center label="Process" title="How an instruction runs" />
-          <div className="process" style={{ marginTop: 56 }}>
-            {process.map((item, index) => (
-              <Reveal className="process__step" key={item.step} delay={index * 80}>
-                <span>{item.step}</span>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--tight">
-        <div className="shell">
-          <Reveal className="cta-band">
-            <div className="cta-band__left">
-              <div>
-                <h2>Not sure which service you need?</h2>
-                <p>Tell us what you are trying to achieve and we will scope it with you.</p>
+        <div className="shell services-page__grid">
+          {services.map((service, index) => (
+            <Reveal as="article" className="service-card" key={service.id} delay={index * 50}>
+              <div className="service-card__media">
+                <img src={service.image} alt="" loading="lazy" decoding="async" />
               </div>
-            </div>
-            <Link className="btn btn--navy" to="/contact">
-              Get in Touch
+              <div className="service-card__body">
+                <span className="service-card__index">{String(index + 1).padStart(2, '0')}</span>
+                <h2>{service.title}</h2>
+                <p>{service.text}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <div className="shell services-page__cta">
+          <div>
+            <h2>Not sure where to start?</h2>
+            <p>
+              Tell us what you are looking for and we will come back with a shortlist — or call the
+              showroom during opening hours.
+            </p>
+          </div>
+          <div className="services-page__actions">
+            <Link className="btn btn--dark" to="/contact">
+              Contact our team
               <ArrowRight className="btn__icon" />
             </Link>
-          </Reveal>
+            <a className="btn btn--outline" href={site.phoneHref}>
+              <Phone className="btn__icon" />
+              {site.phone}
+            </a>
+          </div>
         </div>
       </section>
-    </div>
+    </>
   );
 }

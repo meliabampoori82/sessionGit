@@ -1,209 +1,219 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { heroImage, aboutImages, properties } from '../data/properties.js';
-import { heroStats, services, site, team, whyItems } from '../data/site.js';
+import {
+  aboutImages,
+  bodyStyles,
+  categories,
+  featuredVehicles,
+  formatPrice,
+  heroImage,
+  makes,
+  vehicles,
+  vehicleTitle,
+  whyImage,
+} from '../data/vehicles.js';
+import {
+  about,
+  brandNotes,
+  ctaSection,
+  featuredSection,
+  hero,
+  services,
+  site,
+  team,
+  whyItems,
+  whySection,
+} from '../data/site.js';
+import { useBooking } from '../context/BookingContext.jsx';
 import Carousel from '../components/Carousel.jsx';
-import InquiryModal from '../components/InquiryModal.jsx';
-import PropertyCard from '../components/PropertyCard.jsx';
+import FinanceCalculator from '../components/FinanceCalculator.jsx';
 import Reveal from '../components/Reveal.jsx';
 import SectionHead from '../components/SectionHead.jsx';
-import { ArrowRight, Crown, Globe, Key, Mark, Shield, User } from '../components/Icons.jsx';
-
-const whyIcons = { crown: Crown, shield: Shield, user: User, globe: Globe };
+import VehicleCard from '../components/VehicleCard.jsx';
+import {
+  ArrowRight,
+  ArrowUpRight,
+  iconMap,
+  Mark,
+  Sparkle,
+} from '../components/Icons.jsx';
 
 export default function Home() {
-  const [modal, setModal] = useState(false);
+  const { openBooking } = useBooking();
+  const featured = featuredVehicles();
+
+  const stats = [
+    { value: `${makes.length}`, label: 'Marques curated' },
+    { value: `${vehicles.length}`, label: 'Vehicles listed' },
+    { value: `${bodyStyles.length + categories.length}`, label: 'Body styles & types' },
+  ];
 
   return (
-    <div className="home">
-      {/* ---------------- Hero ---------------- */}
+    <>
+      {/* ---------- Hero ---------- */}
       <section className="hero">
-        <div className="hero__media" aria-hidden="true">
-          <img src={heroImage} alt="" fetchpriority="high" decoding="async" />
-        </div>
-
+        <img className="hero__bg" src={heroImage} alt="" aria-hidden="true" />
+        <div className="hero__scrim" aria-hidden="true" />
         <div className="shell hero__inner">
-          <div className="hero__content">
-            <p className="eyebrow">Horizon Properties · Since 2007</p>
-            <h1>
-              Discover Exceptional
-              <br />
-              Homes &amp; Investments
-            </h1>
-            <p className="hero__lede">
-              Premium properties in prime locations. Find your dream home or the perfect
-              investment with confidence.
-            </p>
-            <div className="hero__actions">
-              <Link className="btn btn--gold" to="/properties">
-                Explore Properties
-                <ArrowRight className="btn__icon" />
-              </Link>
-              <button
-                type="button"
-                className="btn btn--ghost-light"
-                onClick={() => setModal(true)}
-              >
-                Speak to an Advisor
-              </button>
-            </div>
+          <p className="eyebrow hero__anim hero__anim--1">{hero.label}</p>
+          <h1 className="hero__title hero__anim hero__anim--2">{hero.headline}</h1>
+          <p className="hero__text hero__anim hero__anim--3">{hero.text}</p>
+          <div className="hero__actions hero__anim hero__anim--4">
+            <Link className="btn btn--gold" to={hero.primaryCta.to}>
+              {hero.primaryCta.label}
+              <ArrowRight className="btn__icon" />
+            </Link>
+            <button
+              type="button"
+              className="btn btn--ghost-light"
+              onClick={() => openBooking()}
+            >
+              {hero.secondaryCta.label}
+            </button>
           </div>
-        </div>
 
-        <div className="shell" style={{ position: 'relative', zIndex: 2 }}>
-          <ul className="hero__stats">
-            {heroStats.map((stat) => (
-              <li className="hero__stat" key={stat.label}>
-                <strong>{stat.value}</strong>
-                <span>{stat.label}</span>
-              </li>
+          <dl className="hero__stats hero__anim hero__anim--5">
+            {stats.map((stat) => (
+              <div key={stat.label}>
+                <dt>{stat.label}</dt>
+                <dd>{stat.value}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         </div>
-
-        <span className="hero__scroll" aria-hidden="true">
-          Scroll to explore
-        </span>
       </section>
 
-      {/* ---------------- Who we are ---------------- */}
-      <section className="section">
-        <div className="shell about-split">
-          <Reveal className="about-split__copy">
-            <p className="eyebrow">About Us</p>
-            <h2>Who We Are</h2>
-            <p>
-              At Horizon Properties, we connect people with extraordinary homes and smart
-              investments. Integrity, transparency, and client satisfaction are at the heart
-              of everything we do.
-            </p>
-            <div className="about-split__actions">
-              <Link className="btn btn--navy" to="/about">
-                Learn More
-                <ArrowRight className="btn__icon" />
-              </Link>
-              <Link className="link-arrow" to="/team">
-                Meet the team
-                <ArrowRight />
-              </Link>
-            </div>
-
-            <ul className="about-split__facts">
-              <li className="about-fact">
-                <strong>$1.2B</strong>
-                <span>Transacted</span>
-              </li>
-              <li className="about-fact">
-                <strong>640</strong>
-                <span>Homes placed</span>
-              </li>
-              <li className="about-fact">
-                <strong>9</strong>
-                <span>Prime markets</span>
-              </li>
-            </ul>
+      {/* ---------- About ---------- */}
+      <section className="section about-apex">
+        <div className="shell about-apex__grid">
+          <Reveal className="about-apex__text">
+            <p className="eyebrow">{about.label}</p>
+            <h2>{about.headline}</h2>
+            <p className="about-apex__body">{about.text}</p>
+            <Link className="link-arrow" to={about.cta.to}>
+              {about.cta.label}
+              <ArrowRight />
+            </Link>
           </Reveal>
 
-          <Reveal className="about-media" delay={120}>
-            <div className="about-media__main">
-              <img src={aboutImages.main} alt="Modern glass residence at dusk" loading="lazy" decoding="async" />
+          <Reveal className="about-apex__media" delay={120}>
+            <div className="about-apex__main">
+              <img
+                src={aboutImages.main}
+                alt="A performance coupe photographed from the front three-quarter angle"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
-            <div className="about-media__side">
-              <img src={aboutImages.side} alt="Open plan living room with garden view" loading="lazy" decoding="async" />
+            <div className="about-apex__side">
+              <img
+                src={aboutImages.side}
+                alt="Detail of a hand-finished interior"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
-            <div className="about-media__accent">
-              <strong>18</strong>
-              <span>Years advising</span>
-            </div>
-            <Link className="icon-btn about-media__arrow" to="/properties" aria-label="Browse properties">
-              <ArrowRight />
+            <Link className="icon-btn icon-btn--gold about-apex__badge" to="/about">
+              <span className="sr-only">Discover our story</span>
+              <ArrowUpRight />
             </Link>
           </Reveal>
         </div>
       </section>
 
-      {/* ---------------- Featured properties ---------------- */}
-      <section className="section section--ivory">
+      {/* ---------- Featured vehicles ---------- */}
+      <section className="section section--dark featured">
         <div className="shell">
-          <div className="featured__head">
-            <SectionHead label="Featured" title="Featured Properties" />
-            <Link className="link-arrow" to="/properties">
-              View all inventory
-              <ArrowRight />
-            </Link>
-          </div>
-        </div>
-
-        <div className="shell">
+          <SectionHead
+            label={featuredSection.label}
+            title={featuredSection.headline}
+            text={featuredSection.text}
+            align="center"
+            action={{ label: 'View all inventory', to: '/inventory' }}
+            className="section-head--stack"
+          />
           <Carousel
-            items={properties}
-            label="Featured properties"
-            renderItem={(property) => <PropertyCard property={property} />}
+            items={featured}
+            label="Featured vehicles"
+            renderItem={(vehicle, index) => <VehicleCard vehicle={vehicle} eager={index < 2} />}
           />
         </div>
       </section>
 
-      {/* ---------------- Services ---------------- */}
-      <section className="section">
+      {/* ---------- Brands ---------- */}
+      <section className="section section--tight brands">
         <div className="shell">
-          <div className="featured__head">
-            <SectionHead
-              label="What we do"
-              title="Services"
-              intro="Advisory, marketing and transactional support for private clients and investors."
+          <SectionHead
+            label={brandNotes.label}
+            title={brandNotes.headline}
+            text={brandNotes.text}
+            align="center"
+          />
+          <ul className="brand-strip">
+            {makes.map((make) => (
+              <li key={make}>
+                <Link to={`/inventory?make=${encodeURIComponent(make)}`}>
+                  <span>{make}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="brand-strip__cta">
+            <Link className="link-arrow" to="/brands">
+              Browse by brand
+              <ArrowRight />
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* ---------- Services ---------- */}
+      <section className="section services-teaser">
+        <div className="shell services-teaser__grid">
+          <Reveal className="services-teaser__media">
+            <img
+              src={whyImage}
+              alt="A vehicle in a studio-lit showroom"
+              loading="lazy"
+              decoding="async"
             />
+          </Reveal>
+          <div className="services-teaser__list">
+            <SectionHead
+              label="Experience excellence"
+              title="Premium Services"
+              text="Support that continues well beyond the handover."
+            />
+            <ul>
+              {services.slice(0, 6).map((service, index) => (
+                <Reveal as="li" key={service.id} delay={index * 60}>
+                  <span className="services-teaser__index">
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <div>
+                    <h3>{service.title}</h3>
+                    <p>{service.text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </ul>
             <Link className="link-arrow" to="/services">
               All services
               <ArrowRight />
             </Link>
           </div>
-
-          <div className="service-grid">
-            {services.slice(0, 3).map((service, index) => (
-              <Reveal key={service.id} delay={index * 80}>
-                <Link className="service-tile" to="/services">
-                  <img src={service.image} alt="" loading="lazy" decoding="async" />
-                  <div className="service-tile__body">
-                    <p className="service-tile__index">
-                      {String(index + 1).padStart(2, '0')}
-                    </p>
-                    <h3>{service.title}</h3>
-                    <p>{service.text}</p>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* ---------------- Why choose ---------------- */}
-      <section
-        className="section section--navy"
-        style={{
-          backgroundImage:
-            'linear-gradient(180deg, rgba(7,23,37,0.94) 0%, rgba(7,23,37,0.86) 45%, rgba(7,23,37,0.97) 100%), url(https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=70)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
+      {/* ---------- Why choose Apex ---------- */}
+      <section className="section section--dark why">
         <div className="shell">
-          <div className="section-head section-head--center" style={{ marginBottom: 56 }}>
-            <p className="eyebrow eyebrow--center">The difference</p>
-            <h2>Why Choose Horizon Properties?</h2>
-            <p>
-              Four commitments that shape how we advise, list and negotiate on your behalf.
-            </p>
-          </div>
-
-          <div className="why-grid">
+          <SectionHead label={whySection.label} title={whySection.headline} text={whySection.text} />
+          <div className="why__grid">
             {whyItems.map((item, index) => {
-              const Icon = whyIcons[item.icon] ?? Mark;
+              const Icon = iconMap[item.icon] ?? Sparkle;
               return (
-                <Reveal className="why-item" key={item.title} delay={index * 80}>
-                  <span className="why-item__icon">
-                    <Icon />
-                  </span>
+                <Reveal className="why__item" key={item.title} delay={index * 80}>
+                  <Icon className="why__icon" />
                   <h3>{item.title}</h3>
                   <p>{item.text}</p>
                 </Reveal>
@@ -213,68 +223,90 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- Team ---------------- */}
-      <section className="section">
-        <div className="shell">
-          <div className="featured__head">
-            <SectionHead
-              label="Our people"
-              title="A team that knows the market"
-              intro="Senior advisors only — no handovers, no junior negotiators."
-            />
-            <Link className="link-arrow" to="/team">
-              Meet everyone
-              <ArrowRight />
-            </Link>
-          </div>
-
-          <div className="team-grid">
-            {team.map((member, index) => (
-              <Reveal key={member.id} delay={index * 80}>
-                <article className="team-card">
-                  <div className="team-card__media">
-                    <img src={member.image} alt={member.name} loading="lazy" decoding="async" />
-                  </div>
-                  <div className="team-card__body">
-                    <h3>{member.name}</h3>
-                    <p className="team-card__role">{member.role}</p>
-                    <p className="team-card__bio">{member.bio}</p>
-                  </div>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------------- CTA ---------------- */}
-      <section className="section section--tight" style={{ paddingTop: 0 }}>
-        <div className="shell">
-          <Reveal className="cta-band">
-            <div className="cta-band__left">
-              <span className="cta-band__icon">
-                <Key />
-              </span>
-              <div>
-                <h2>Ready to Find Your Perfect Property?</h2>
-                <p>Let our experts guide you to the right home or investment.</p>
-              </div>
+      {/* ---------- Finance & trade-in ---------- */}
+      <section className="section section--mist finance-cta">
+        <div className="shell finance-cta__grid">
+          <Reveal className="finance-cta__text">
+            <p className="eyebrow">Financing &amp; trade-in</p>
+            <h2>Plan the numbers before you visit</h2>
+            <p>
+              Model a monthly payment in seconds, or ask us to value the car you are replacing. No
+              pressure, no jargon — just the figures you need to decide.
+            </p>
+            <ul className="tick-list">
+              <li>Transparent pricing with no hidden add-ons</li>
+              <li>Trade-in valuation against your next vehicle</li>
+              <li>Financing options explained by a specialist</li>
+            </ul>
+            <div className="finance-cta__actions">
+              <Link className="btn btn--dark" to="/contact">
+                Ask about financing
+                <ArrowRight className="btn__icon" />
+              </Link>
+              <Link className="btn btn--outline" to="/services">
+                Trade-in valuation
+              </Link>
             </div>
-            <button className="btn btn--navy" type="button" onClick={() => setModal(true)}>
-              Get in Touch
-              <ArrowRight className="btn__icon" />
-            </button>
+          </Reveal>
+          <Reveal className="finance-cta__calc" delay={120}>
+            <FinanceCalculator defaultPrice={142900} />
           </Reveal>
         </div>
       </section>
 
-      <InquiryModal
-        open={modal}
-        onClose={() => setModal(false)}
-        title="Speak to an advisor"
-        subject={site.name}
-        submitLabel="Request a call"
-      />
-    </div>
+      {/* ---------- Team ---------- */}
+      <section className="section team-teaser">
+        <div className="shell">
+          <SectionHead
+            label="The people"
+            title="Meet the Team"
+            text="A small group of specialists, not a sales floor of strangers."
+            action={{ label: 'More about us', to: '/about' }}
+          />
+          <ul className="team-grid">
+            {team.map((member, index) => (
+              <Reveal as="li" className="team-card" key={member.id} delay={index * 70}>
+                <div className="team-card__media">
+                  <img
+                    src={member.image}
+                    alt={`${member.name}, ${member.role}`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <h3>{member.name}</h3>
+                <p className="team-card__role">{member.role}</p>
+                <p className="team-card__bio">{member.bio}</p>
+                <a className="link-arrow" href={`mailto:${member.email}`}>
+                  Get in touch
+                  <ArrowRight />
+                </a>
+              </Reveal>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ---------- Closing CTA ---------- */}
+      <section className="section closing-cta">
+        <div className="shell closing-cta__inner">
+          <span className="closing-cta__mark" aria-hidden="true">
+            <Mark />
+          </span>
+          <h2>{ctaSection.headline}</h2>
+          <p>{ctaSection.text}</p>
+          <div className="closing-cta__actions">
+            <Link className="btn btn--dark" to={ctaSection.primary.to}>
+              {ctaSection.primary.label}
+              <ArrowRight className="btn__icon" />
+            </Link>
+            <Link className="btn btn--outline" to={ctaSection.secondary.to}>
+              {ctaSection.secondary.label}
+            </Link>
+          </div>
+          <p className="closing-cta__note">{site.demoNotice}</p>
+        </div>
+      </section>
+    </>
   );
 }

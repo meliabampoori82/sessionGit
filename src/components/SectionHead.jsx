@@ -1,28 +1,35 @@
-/** Consistent section heading: eyebrow label + title + optional intro or aside. */
+import { Link } from 'react-router-dom';
+import Reveal from './Reveal.jsx';
+import { ArrowRight } from './Icons.jsx';
+
+/**
+ * Section heading block: eyebrow label, title, supporting text and an optional
+ * trailing link. Used by every home/inner section so spacing stays consistent.
+ */
 export default function SectionHead({
   label,
   title,
-  intro,
-  aside,
-  center = false,
+  text,
+  align = 'left',
+  action,
   as: Tag = 'h2',
+  className = '',
 }) {
-  const head = (
-    <div className="section-head">
-      {label && <p className={`eyebrow${center ? ' eyebrow--center' : ''}`}>{label}</p>}
-      <Tag>{title}</Tag>
-      {intro && <p style={{ marginTop: 18 }}>{intro}</p>}
-    </div>
-  );
-
-  if (aside) {
-    return (
-      <div className="section-head--split">
-        {head}
-        <div>{aside}</div>
+  return (
+    <Reveal
+      className={`section-head section-head--${align}${className ? ` ${className}` : ''}`}
+    >
+      <div className="section-head__text">
+        {label && <p className="eyebrow">{label}</p>}
+        {title && <Tag>{title}</Tag>}
+        {text && <p className="section-head__lede">{text}</p>}
       </div>
-    );
-  }
-
-  return center ? <div className="section-head--center">{head}</div> : head;
+      {action && (
+        <Link className="link-arrow" to={action.to}>
+          {action.label}
+          <ArrowRight />
+        </Link>
+      )}
+    </Reveal>
+  );
 }

@@ -1,7 +1,8 @@
-# Horizon Properties — working notes
+# Apex Motors — working notes
 
-React + Vite single-page site. Property data lives in `src/data/properties.js`
-(single source of truth; swap it for an API later without touching components).
+Premium automotive dealership site. React + Vite single-page app. Vehicle data lives
+in `src/data/vehicles.js` and site copy/nav in `src/data/site.js` — both are the
+single source of truth (swap them for an API later without touching components).
 
 ## Running it
 
@@ -28,16 +29,37 @@ Web entry point: host port **3000** (`vite dev`). Healthcheck probes `/` with `f
   Do not hardcode a resolved host into any file.
 - **File watching uses polling** (`server.watch.usePolling`) because bind mounts do
   not deliver native file events reliably.
+- **HMR plus `hidden` attributes.** The mobile menu and the modals are mounted with
+  the `hidden` attribute; `.mobile-menu` sets `display: flex`, so the
+  `.mobile-menu[hidden] { display: none }` rule in `components.css` is load-bearing.
+  Removing it makes the menu cover the whole site.
+- After a batch of file additions/deletions, Vite's HMR can end up with a stale
+  module graph (context providers and their consumers in different instances, which
+  throws "must be used within FavoritesProvider"). A full page reload fixes it — it
+  is not an application bug.
 - `funaction.js`, `main_js.js`, `main_js2.js` and `JS-Function1.pdf` are unrelated
   JavaScript exercise material that predates the site. They are not part of the app
   and are not served.
 
 ## Client-side state
 
-- Saved properties: `localStorage['horizon:favorites']` (array of property ids).
-- Enquiries from the contact / viewing forms: `localStorage['horizon:inquiries']`.
-  These are the seams to replace with a real backend (POST endpoint + table) — the
-  form and card components already call them through single helpers.
+There is no backend in this project. Everything is local and the UI says so:
+
+- Saved vehicles: `localStorage['apex:favorites']` (array of vehicle ids).
+- Test drive requests: `localStorage['apex:test-drives']` — the confirmation states
+  plainly that nothing was sent to a dealership and no appointment was booked.
+- Contact enquiries: `localStorage['apex:enquiries']` — same honest wording.
+
+These are the seams to replace with a real backend (POST endpoint + tables). Forms
+and cards already go through single helper components, so swapping the storage calls
+is enough.
+
+## Demo content
+
+Inventory, prices, specifications, team and contact details are sample content
+(`inventoryNote` in `src/data/vehicles.js`, `site.demoNotice` in `src/data/site.js`).
+Do not present them as real availability. Photography is served from
+`images.unsplash.com` and is illustrative, not a photograph of each exact car.
 
 ## Verifying a change
 
@@ -45,5 +67,5 @@ Web entry point: host port **3000** (`vite dev`). Healthcheck probes `/` with `f
 2. Confirm live source, not a prebuilt bundle: `curl -s http://localhost:3000/src/main.jsx`
    should return Vite-transformed JSX, and `/@vite/client` should be present in `/`.
 3. SPA routes are served by Vite's history fallback, so deep links like
-   `/properties/lakeside-modern-villa` return `200` on a hard load.
+   `/inventory/porsche-911-carrera` return `200` on a hard load.
 4. There is no test suite and no linter configured.

@@ -1,130 +1,111 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { navItems, site } from '../data/site.js';
-import { CheckCircle, Facebook, Instagram, Linkedin, Mail, MapPin, Mark, Phone } from './Icons.jsx';
+import { footerCategories, navItems, site, socials } from '../data/site.js';
+import { iconMap, Mail, MapPin, Mark, Phone } from './Icons.jsx';
+import NewsletterForm from './NewsletterForm.jsx';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [state, setState] = useState('idle'); // idle | error | done
-
-  const subscribe = (event) => {
-    event.preventDefault();
-    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
-    setState(valid ? 'done' : 'error');
-  };
-
   return (
-    <footer className="footer">
+    <footer className="site-footer">
       <div className="shell">
-        <div className="footer__grid">
-          <div className="footer__brand">
-            <Link className="logo" to="/">
+        <div className="site-footer__news">
+          <div>
+            <p className="eyebrow">Stay in the loop</p>
+            <h2 className="site-footer__news-title">New arrivals, first</h2>
+            <p className="site-footer__news-text">
+              Occasional updates when a notable vehicle reaches the showroom.
+            </p>
+          </div>
+          <NewsletterForm />
+        </div>
+
+        <div className="site-footer__grid">
+          <div className="site-footer__brand">
+            <Link className="logo logo--light" to="/" aria-label={`${site.name} home`}>
               <Mark className="logo__mark" />
               <span className="logo__text">
-                <span className="logo__name">Horizon</span>
-                <span className="logo__sub">Properties</span>
+                <span className="logo__name">Apex</span>
+                <span className="logo__sub">Motors</span>
               </span>
             </Link>
-            <p>
-              A private-client agency for architecturally significant homes and considered
-              property investment across the United States.
+            <p className="site-footer__about">
+              An independent dealership curating luxury, performance and pre-owned vehicles for
+              drivers who care about the details.
             </p>
-            <div className="footer__socials">
-              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">
-                <Instagram />
-              </a>
-              <a href="https://www.facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook">
-                <Facebook />
-              </a>
-              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer" aria-label="LinkedIn">
-                <Linkedin />
-              </a>
-            </div>
+            <ul className="socials">
+              {socials.map((item) => {
+                const Icon = iconMap[item.icon];
+                return (
+                  <li key={item.label}>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      aria-label={item.label}
+                    >
+                      <Icon />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
 
-          <div>
-            <h3>Navigate</h3>
-            <ul className="footer__list">
+          <nav className="site-footer__col" aria-label="Footer navigation">
+            <h3>Explore</h3>
+            <ul>
               {navItems.map((item) => (
                 <li key={item.to}>
                   <Link to={item.to}>{item.label}</Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          <div>
-            <h3>Contact</h3>
-            <ul className="footer__list">
+          <nav className="site-footer__col" aria-label="Vehicle categories">
+            <h3>Categories</h3>
+            <ul>
+              {footerCategories.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="site-footer__col">
+            <h3>Showroom</h3>
+            <ul className="site-footer__contact">
               <li>
-                <a href={site.phoneHref}>
-                  <Phone style={{ width: 14, height: 14, display: 'inline', marginRight: 8 }} />
-                  {site.phone}
-                </a>
+                <Phone />
+                <a href={site.phoneHref}>{site.phone}</a>
               </li>
               <li>
-                <a href={`mailto:${site.email}`}>
-                  <Mail style={{ width: 14, height: 14, display: 'inline', marginRight: 8 }} />
-                  {site.email}
-                </a>
+                <Mail />
+                <a href={`mailto:${site.email}`}>{site.email}</a>
               </li>
               <li>
-                <span>
-                  <MapPin style={{ width: 14, height: 14, display: 'inline', marginRight: 8 }} />
-                  {site.address}
+                <MapPin />
+                <span>{site.address}</span>
+              </li>
+              <li>
+                <span className="site-footer__hours">
+                  {site.hours} · {site.hoursNote}
                 </span>
               </li>
             </ul>
           </div>
-
-          <div className="footer__newsletter-col">
-            <h3>Newsletter</h3>
-            <div className="footer__newsletter">
-              <p style={{ marginBottom: 16 }}>
-                New listings and market notes, once a month.
-              </p>
-              {state === 'done' ? (
-                <p className="form-success">
-                  <CheckCircle />
-                  You are subscribed. Look out for our next note.
-                </p>
-              ) : (
-                <form onSubmit={subscribe} noValidate>
-                  <label className="sr-only" htmlFor="footer-email">
-                    Email address
-                  </label>
-                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                    <input
-                      id="footer-email"
-                      className="input"
-                      type="email"
-                      placeholder="you@email.com"
-                      value={email}
-                      onChange={(event) => {
-                        setEmail(event.target.value);
-                        setState('idle');
-                      }}
-                      style={{ flex: '1 1 190px' }}
-                      aria-invalid={state === 'error'}
-                    />
-                    <button className="btn btn--gold" type="submit">
-                      Join
-                    </button>
-                  </div>
-                  {state === 'error' && (
-                    <p className="field__error" style={{ marginTop: 8 }}>
-                      Please enter a valid email address.
-                    </p>
-                  )}
-                </form>
-              )}
-            </div>
-          </div>
         </div>
 
-        <div className="footer__bottom">
-          <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
-          <p>Licensed real estate brokerage · Texas · California · Florida</p>
+        <div className="site-footer__bottom">
+          <p>© {new Date().getFullYear()} {site.name}. Demonstration site.</p>
+          <ul className="site-footer__legal">
+            <li>
+              <Link to="/privacy">Privacy policy</Link>
+            </li>
+            <li>
+              <Link to="/terms">Terms and conditions</Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-const STORAGE_KEY = 'horizon:favorites';
+const STORAGE_KEY = 'apex:favorites';
 const FavoritesContext = createContext(null);
 
 const read = () => {

@@ -1,67 +1,79 @@
-import PageBanner from '../components/PageBanner.jsx';
-import InquiryForm from '../components/InquiryForm.jsx';
-import Reveal from '../components/Reveal.jsx';
-import { Mail, MapPin, Phone, Calendar } from '../components/Icons.jsx';
-import { properties } from '../data/properties.js';
 import { site } from '../data/site.js';
+import ContactForm from '../components/ContactForm.jsx';
+import PageBanner from '../components/PageBanner.jsx';
+import Reveal from '../components/Reveal.jsx';
+import { Clock, Mail, MapPin, Phone } from '../components/Icons.jsx';
+
+const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(site.address)}`;
 
 export default function Contact() {
   return (
-    <div>
+    <>
       <PageBanner
         label="Contact"
-        title="Start a conversation"
-        intro="Tell us what you are looking for and a senior advisor will come back to you within one business day."
-        image={properties[5].images[0]}
-        crumbs={[{ label: 'Home', to: '/' }, { label: 'Contact' }]}
+        title="Talk to Apex Motors"
+        text="Questions about a vehicle, financing or a viewing — we answer them all in one place."
+        crumbs={[{ label: 'Contact' }]}
       />
 
       <section className="section">
-        <div className="shell contact-layout">
-          <Reveal>
-            <div className="contact-cards">
-              <div className="contact-card">
+        <div className="shell contact__grid">
+          <Reveal className="contact__form">
+            <h2>Send us a message</h2>
+            <p className="contact__lede">
+              We usually reply within one business day. For anything urgent, call the showroom
+              directly.
+            </p>
+            <ContactForm />
+          </Reveal>
+
+          <Reveal className="contact__aside" delay={120}>
+            <ul className="contact-facts">
+              <li>
                 <Phone />
                 <div>
                   <h3>Phone</h3>
-                  <p>
-                    <a href={site.phoneHref}>{site.phone}</a>
-                  </p>
+                  <a href={site.phoneHref}>{site.phone}</a>
                 </div>
-              </div>
-              <div className="contact-card">
+              </li>
+              <li>
                 <Mail />
                 <div>
                   <h3>Email</h3>
-                  <p>
-                    <a href={`mailto:${site.email}`}>{site.email}</a>
-                  </p>
+                  <a href={`mailto:${site.email}`}>{site.email}</a>
                 </div>
-              </div>
-              <div className="contact-card">
+              </li>
+              <li>
                 <MapPin />
                 <div>
-                  <h3>Office</h3>
+                  <h3>Showroom</h3>
                   <p>{site.address}</p>
+                  <a
+                    className="link-arrow"
+                    href={mapHref}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    Open in maps
+                  </a>
                 </div>
-              </div>
-              <div className="contact-card">
-                <Calendar />
+              </li>
+              <li>
+                <Clock />
                 <div>
-                  <h3>Opening hours</h3>
-                  <p>{site.hours}</p>
+                  <h3>Business hours</h3>
+                  <p>
+                    {site.hours}
+                    <br />
+                    {site.hoursNote}
+                  </p>
                 </div>
-              </div>
-            </div>
-          </Reveal>
-
-          <Reveal className="contact-form" delay={120}>
-            <h2>Send us a message</h2>
-            <p>Fields marked optional can be left blank.</p>
-            <InquiryForm subject={site.name} submitLabel="Send message" />
+              </li>
+            </ul>
+            <p className="contact__note">{site.demoNotice}</p>
           </Reveal>
         </div>
       </section>
-    </div>
+    </>
   );
 }

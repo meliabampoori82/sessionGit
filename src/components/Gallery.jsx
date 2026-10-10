@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, Close, Expand } from './Icons.jsx';
 
-/** Image gallery with thumbnails and a fullscreen viewer. */
+/** Vehicle image gallery with thumbnails and a fullscreen viewer. */
 export default function Gallery({ images, name }) {
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
@@ -46,7 +46,7 @@ export default function Gallery({ images, name }) {
         <div className="gallery__thumbs" role="tablist" aria-label={`${name} gallery`}>
           {images.map((src, i) => (
             <button
-              key={src}
+              key={`${src}-${i}`}
               type="button"
               role="tab"
               aria-selected={i === index}

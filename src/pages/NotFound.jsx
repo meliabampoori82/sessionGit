@@ -1,14 +1,25 @@
 import { Link } from 'react-router-dom';
+import { ArrowRight } from '../components/Icons.jsx';
 
 export default function NotFound() {
   return (
-    <div className="shell notfound">
-      <p className="eyebrow eyebrow--center">404</p>
-      <h1>We couldn’t find that page</h1>
-      <p>The property may have been sold or the link may be out of date.</p>
-      <Link className="btn btn--navy" to="/properties">
-        Browse all properties
-      </Link>
-    </div>
+    <section className="section notfound">
+      <div className="shell notfound__inner">
+        <p className="eyebrow">Error 404</p>
+        <h1>This page has left the showroom</h1>
+        <p>
+          The address you followed does not exist. Head back to the inventory, or browse by brand.
+        </p>
+        <div className="notfound__actions">
+          <Link className="btn btn--gold" to="/inventory">
+            View inventory
+            <ArrowRight className="btn__icon" />
+          </Link>
+          <Link className="btn btn--outline" to="/">
+            Back to home
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }

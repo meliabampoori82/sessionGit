@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from './Icons.jsx';
  * Horizontal, snap-scrolling rail with pointer drag, touch swipe, arrow buttons
  * and keyboard support. Children are rendered via `renderItem`.
  */
-export default function Carousel({ items, renderItem, label }) {
+export default function Carousel({ items, renderItem, label = 'Vehicles' }) {
   const viewport = useRef(null);
   const drag = useRef({ active: false, startX: 0, startScroll: 0, moved: 0 });
   const [progress, setProgress] = useState(0);
@@ -96,7 +96,7 @@ export default function Carousel({ items, renderItem, label }) {
         className="carousel__viewport"
         ref={viewport}
         role="group"
-        aria-label={label}
+        aria-label={`${label} carousel`}
         tabIndex={0}
         onKeyDown={onKeyDown}
         onPointerDown={onPointerDown}
@@ -113,17 +113,17 @@ export default function Carousel({ items, renderItem, label }) {
       </div>
 
       <div className="carousel__progress" aria-hidden="true">
-        <span style={{ width: '34%', transform: `translateX(${(progress * 100 * 100) / 34}%)` }} />
+        <span style={{ width: '34%', transform: `translateX(${progress * (100 / 34 - 1) * 100}%)` }} />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 22 }}>
+      <div className="carousel__controls-row">
         <div className="carousel__controls">
           <button
             type="button"
             className="icon-btn"
             onClick={() => step(-1)}
             disabled={edges.start}
-            aria-label="Previous properties"
+            aria-label="Previous vehicles"
           >
             <ChevronLeft />
           </button>
@@ -132,7 +132,7 @@ export default function Carousel({ items, renderItem, label }) {
             className="icon-btn"
             onClick={() => step(1)}
             disabled={edges.end}
-            aria-label="Next properties"
+            aria-label="Next vehicles"
           >
             <ChevronRight />
           </button>
